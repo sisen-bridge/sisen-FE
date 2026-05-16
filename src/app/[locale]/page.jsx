@@ -1,7 +1,20 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ExternalLink, Eye, Globe2, HelpCircle, RotateCcw, Search, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ExternalLink,
+  Eye,
+  Globe2,
+  HelpCircle,
+  RotateCcw,
+  Search,
+  X,
+} from "lucide-react";
+import { useTopics } from "@/hooks/useTopics";
+import { useArticles } from "@/hooks/useArticles";
+import { useArticle } from "@/hooks/useArticle";
+import { mergeArticleDetail } from "@/lib/transforms";
 
 const copy = {
   ko: {
@@ -20,6 +33,10 @@ const copy = {
     neutral: "중립 헤드라인",
     reset: "다시 보기",
     close: "닫기",
+    loading: "불러오는 중...",
+    empty: "표시할 뉴스가 없습니다",
+    error: "데이터를 불러오지 못했습니다",
+    articles: "건의 묶인 기사",
   },
   ja: {
     exit: "閉じる",
@@ -37,6 +54,10 @@ const copy = {
     neutral: "中立見出し",
     reset: "もう一度見る",
     close: "閉じる",
+    loading: "読み込み中...",
+    empty: "表示するニュースがありません",
+    error: "データを取得できませんでした",
+    articles: "件の集約記事",
   },
 };
 
@@ -59,384 +80,13 @@ const suggestedSearches = {
   ],
 };
 
-const events = [
-  {
-    id: "forced-labor-foundation",
-    count: 42,
-    visual: "labor",
-    headline: {
-      ko: "한일 강제동원 해법 논의, 피해자 지원 재단을 둘러싼 이견 지속",
-      ja: "日韓の徴用問題解決策、被害者支援財団をめぐり見解の違い続く",
-    },
-    deck: {
-      ko: "양국 정부 관계자와 피해자 측은 강제동원 배상 해법의 재원, 사과 표현, 후속 조치 범위를 두고 협의를 이어가고 있다.",
-      ja: "両国政府関係者と被害者側は、徴用問題の解決策について財源、謝罪表現、今後の措置を協議している。",
-    },
-    facts: {
-      ko: [
-        "한국 정부는 피해자 지원을 위한 재단 중심의 변제 방안을 논의했다.",
-        "일본 정부는 1965년 청구권 협정에 대한 기존 입장을 유지하고 있다.",
-        "피해자 단체 일부는 일본 기업의 직접 참여와 명확한 사과를 요구하고 있다.",
-      ],
-      ja: [
-        "韓国政府は被害者支援財団を軸にした弁済案を議論している。",
-        "日本政府は1965年請求権協定に関する従来の立場を維持している。",
-        "一部の被害者団体は日本企業の直接参加と明確な謝罪を求めている。",
-      ],
-    },
-    outlets: [
-      {
-        id: "kr-1",
-        side: "korea",
-        outlet: "한겨레",
-        tags: ["피해자 동의", "사과 표현", "절차적 정당성"],
-        headline: {
-          ko: "강제동원 해법, 피해자 동의 없는 속도전 논란",
-          ja: "徴用問題解決策、被害者同意なき拙速論議",
-        },
-        summary: {
-          ko: "피해자 중심 원칙이 충분히 반영됐는지에 초점을 맞추며, 외교적 속도보다 당사자 동의와 일본 측 책임 인정의 구체성을 강조한다.",
-          ja: "被害者中心の原則が十分反映されたかに焦点を当て、外交的な速度より当事者の同意と日本側の責任認定の具体性を強調する。",
-        },
-        url: "https://www.hani.co.kr/",
-      },
-      {
-        id: "kr-2",
-        side: "korea",
-        outlet: "조선일보",
-        tags: ["관계 복원", "안보 협력", "미래지향"],
-        headline: {
-          ko: "한일 관계 복원 물꼬, 과거사 해법이 협력 재개의 시험대",
-          ja: "日韓関係回復へ、歴史問題解決策が協力再開の試金石に",
-        },
-        summary: {
-          ko: "한일 관계 복원의 필요성을 전면에 두고, 과거사 갈등 관리가 경제와 안보 협력의 재개 조건이라는 관점으로 설명한다.",
-          ja: "日韓関係回復の必要性を前面に置き、歴史問題の管理が経済・安保協力再開の条件だという視点で説明する。",
-        },
-        url: "https://www.chosun.com/",
-      },
-      {
-        id: "jp-1",
-        side: "japan",
-        outlet: "朝日新聞",
-        tags: ["被害者救済", "歴史認識", "国内反発"],
-        headline: {
-          ko: "한국 내 반발 여전, 강제동원 합의의 사회적 수용성 과제로",
-          ja: "韓国内の反発なお、徴用合意は社会的受容が課題",
-        },
-        summary: {
-          ko: "한국 내 피해자 반발과 역사 인식의 긴장을 함께 다루며, 실무 합의가 사회적 수용성을 얻을 수 있는지가 핵심이라고 본다.",
-          ja: "韓国内の被害者反発と歴史認識の緊張を扱い、実務合意が社会的受容性を得られるかを核心に置く。",
-        },
-        url: "https://www.asahi.com/",
-      },
-      {
-        id: "jp-2",
-        side: "japan",
-        outlet: "読売新聞",
-        tags: ["協定尊重", "外交安定", "再発防止"],
-        headline: {
-          ko: "1965년 협정 존중 속 한일 외교 안정화 모색",
-          ja: "1965年協定尊重のもと日韓外交の安定化を探る",
-        },
-        summary: {
-          ko: "1965년 협정의 안정성을 강조하고, 한국 정부가 국내 절차를 어떻게 정리하느냐가 관계 개선의 지속성을 좌우한다고 해석한다.",
-          ja: "1965年協定の安定性を重視し、韓国政府が国内手続きをどう整理するかが関係改善の持続性を左右すると見る。",
-        },
-        url: "https://www.yomiuri.co.jp/",
-      },
-    ],
-  },
-  {
-    id: "fukushima-water",
-    count: 37,
-    visual: "water",
-    headline: {
-      ko: "후쿠시마 처리수 방류 점검 결과 공개, 안전성 해석 놓고 보도 차이",
-      ja: "福島処理水の点検結果公表、安全性の解釈で報道に差",
-    },
-    deck: {
-      ko: "일본 정부와 국제기구는 방류 기준과 측정치를 공개했고, 한국 정부와 시민단체는 검증 방식과 장기 영향에 대한 설명을 요구하고 있다.",
-      ja: "日本政府と国際機関は放出基準と測定値を公表し、韓国政府と市民団体は検証方法と長期影響への説明を求めている。",
-    },
-    facts: {
-      ko: [
-        "일본은 원전 처리수를 희석해 해양 방류하는 절차를 진행하고 있다.",
-        "국제기구는 기준 충족 여부를 점검하는 보고서를 발표했다.",
-        "인접국 여론은 식품 안전과 해양 생태 영향에 민감하게 반응하고 있다.",
-      ],
-      ja: [
-        "日本は原発処理水を希釈して海洋放出する手続きを進めている。",
-        "国際機関は基準適合を点検する報告書を発表した。",
-        "近隣国の世論は食品安全と海洋生態への影響に敏感に反応している。",
-      ],
-    },
-    outlets: [
-      {
-        id: "kr-3",
-        side: "korea",
-        outlet: "경향신문",
-        tags: ["장기 영향", "검증 투명성", "소비자 불안"],
-        headline: {
-          ko: "후쿠시마 처리수 점검 공개에도 장기 영향 우려 남아",
-          ja: "福島処理水点検公表後も長期影響への懸念残る",
-        },
-        summary: {
-          ko: "단기 수치보다 장기 감시 체계와 정보 공개의 신뢰성을 묻고, 시민 불안이 과학 소통의 부족에서 커진다고 본다.",
-          ja: "短期数値より長期監視体制と情報公開の信頼性を問い、市民不安は科学コミュニケーション不足で拡大すると見る。",
-        },
-        url: "https://www.khan.co.kr/",
-      },
-      {
-        id: "kr-4",
-        side: "korea",
-        outlet: "중앙일보",
-        tags: ["기준 충족", "외교 관리", "수산업"],
-        headline: {
-          ko: "처리수 기준 충족 발표, 수산업 불안 관리가 관건",
-          ja: "処理水基準満たす発表、水産業不安の管理が焦点",
-        },
-        summary: {
-          ko: "국제 기준과 국내 수산업 피해 관리 사이의 균형을 강조하며, 정부 설명 책임과 시장 안정 대책을 함께 다룬다.",
-          ja: "国際基準と国内水産業被害管理の均衡を重視し、政府説明責任と市場安定策をあわせて扱う。",
-        },
-        url: "https://www.joongang.co.kr/",
-      },
-      {
-        id: "jp-3",
-        side: "japan",
-        outlet: "NHK",
-        tags: ["基準値", "モニタリング", "風評被害"],
-        headline: {
-          ko: "처리수 방류 모니터링 결과 기준치 이하 확인",
-          ja: "処理水放出の監視結果、基準値下回ることを確認",
-        },
-        summary: {
-          ko: "측정치와 절차 설명을 중심으로 보도하며, 기준 이하 결과와 풍평 피해 대응을 주요 쟁점으로 제시한다.",
-          ja: "測定値と手続き説明を中心に報じ、基準以下の結果と風評被害対応を主要論点として提示する。",
-        },
-        url: "https://www3.nhk.or.jp/news/",
-      },
-      {
-        id: "jp-4",
-        side: "japan",
-        outlet: "毎日新聞",
-        tags: ["説明責任", "漁業者", "近隣国"],
-        headline: {
-          ko: "정부 설명 책임 커져, 어업자와 주변국 신뢰 확보 과제",
-          ja: "政府の説明責任重く、漁業者と近隣国の信頼確保が課題",
-        },
-        summary: {
-          ko: "정부와 전력회사의 설명 책임을 강조하고, 어업 관계자와 주변국의 신뢰 확보가 방류 정책의 관건이라고 본다.",
-          ja: "政府と電力会社の説明責任を強調し、漁業者と近隣国の信頼確保が放出政策の鍵だと見る。",
-        },
-        url: "https://mainichi.jp/",
-      },
-    ],
-  },
-  {
-    id: "security-dialogue",
-    count: 28,
-    visual: "security",
-    headline: {
-      ko: "한일 안보 대화 재개, 정보 공유와 역사 현안 병행 논의",
-      ja: "日韓安保対話再開、情報共有と歴史懸案を並行協議",
-    },
-    deck: {
-      ko: "양국 외교·안보 당국은 역내 긴장 고조에 대응하기 위해 실무 대화를 재개했으며, 국내 정치권은 협력의 범위와 조건을 두고 엇갈린 평가를 내놓고 있다.",
-      ja: "両国の外交・安保当局は地域緊張に対応するため実務対話を再開し、国内政界では協力範囲と条件をめぐり評価が分かれている。",
-    },
-    facts: {
-      ko: [
-        "양국 당국자는 안보 분야 실무 협의를 열었다.",
-        "논의에는 정보 공유, 공급망, 역내 정세가 포함됐다.",
-        "역사 문제와 국내 여론은 협력 확대의 제약 요인으로 남아 있다.",
-      ],
-      ja: [
-        "両国当局者は安全保障分野の実務協議を開いた。",
-        "議題には情報共有、供給網、地域情勢が含まれた。",
-        "歴史問題と国内世論は協力拡大の制約要因として残る。",
-      ],
-    },
-    outlets: [
-      {
-        id: "kr-5",
-        side: "korea",
-        outlet: "동아일보",
-        tags: ["북핵 대응", "실용 외교", "정보 협력"],
-        headline: {
-          ko: "한일 안보 대화 재개, 북핵 대응 정보 협력 속도",
-          ja: "日韓安保対話再開、北朝鮮核対応の情報協力加速",
-        },
-        summary: {
-          ko: "북핵과 지역 안보 위험을 중심에 두고, 한일 협력이 선택이 아니라 실용적 필요라는 방향으로 서사를 구성한다.",
-          ja: "北朝鮮核と地域安保リスクを中心に、日韓協力は選択ではなく実用的必要だという流れで構成する。",
-        },
-        url: "https://www.donga.com/",
-      },
-      {
-        id: "kr-6",
-        side: "korea",
-        outlet: "오마이뉴스",
-        tags: ["국내 동의", "역사 현안", "균형 외교"],
-        headline: {
-          ko: "역사 현안 남긴 채 안보 협력 앞세우는 정부에 우려",
-          ja: "歴史懸案残したまま安保協力を優先する政府に懸念",
-        },
-        summary: {
-          ko: "안보 협력의 필요성을 인정하되, 역사 현안이 정리되지 않은 상태에서 협력이 앞서가는 위험을 강조한다.",
-          ja: "安保協力の必要性は認めつつ、歴史懸案が整理されないまま協力が先行する危険を強調する。",
-        },
-        url: "https://www.ohmynews.com/",
-      },
-      {
-        id: "jp-5",
-        side: "japan",
-        outlet: "日本経済新聞",
-        tags: ["供給網", "米国連携", "経済安保"],
-        headline: {
-          ko: "한일 안보 협력, 공급망과 경제안보까지 확대",
-          ja: "日韓安保協力、供給網と経済安保まで拡大",
-        },
-        summary: {
-          ko: "안보를 공급망과 기술 협력까지 확장해 다루며, 미국과의 삼각 공조가 경제 안정성에 미치는 의미를 부각한다.",
-          ja: "安保を供給網と技術協力まで拡張して扱い、米国との三角連携が経済安定性に持つ意味を強調する。",
-        },
-        url: "https://www.nikkei.com/",
-      },
-      {
-        id: "jp-6",
-        side: "japan",
-        outlet: "産経新聞",
-        tags: ["抑止力", "同盟網", "対北朝鮮"],
-        headline: {
-          ko: "대북 억지력 강화 위해 한일 안보 협력 지속 필요",
-          ja: "対北朝鮮抑止力強化へ日韓安保協力の継続必要",
-        },
-        summary: {
-          ko: "억지력과 동맹 네트워크 강화를 핵심으로 제시하며, 한국의 정책 지속성이 일본의 신뢰 판단 기준이라고 본다.",
-          ja: "抑止力と同盟網強化を核心に据え、韓国政策の持続性が日本側の信頼判断基準だと見る。",
-        },
-        url: "https://www.sankei.com/",
-      },
-    ],
-  },
-];
-
-const koreanOutletSeeds = [
-  { outlet: "한겨레", url: "https://www.hani.co.kr/" },
-  { outlet: "경향신문", url: "https://www.khan.co.kr/" },
-  { outlet: "중앙일보", url: "https://www.joongang.co.kr/" },
-  { outlet: "조선일보", url: "https://www.chosun.com/" },
-  { outlet: "동아일보", url: "https://www.donga.com/" },
-];
-
-const japaneseOutletSeeds = [
-  { outlet: "朝日新聞", url: "https://www.asahi.com/" },
-  { outlet: "毎日新聞", url: "https://mainichi.jp/" },
-  { outlet: "読売新聞", url: "https://www.yomiuri.co.jp/" },
-  { outlet: "NHK", url: "https://www3.nhk.or.jp/news/" },
-  { outlet: "日本経済新聞", url: "https://www.nikkei.com/" },
-];
-
-const extraEventSeeds = [
-  ["trade-minerals", 31, "security", "핵심 광물 공급망 협의 확대, 경제안보 보도 온도차", "重要鉱物の供給網協議拡大、経済安保報道に温度差"],
-  ["student-exchange", 26, "labor", "한일 청년 교류 재개 움직임, 역사 교육 논의와 함께 주목", "日韓青年交流再開の動き、歴史教育議論とともに注目"],
-  ["fishery-inspection", 24, "water", "수산물 검사 강화 발표, 소비자 불안과 지역 경제 영향 부각", "水産物検査強化を発表、消費者不安と地域経済への影響が焦点"],
-  ["visa-tourism", 22, "labor", "관광 회복세 속 비자·항공 노선 확대를 둘러싼 기대감", "観光回復の中でビザ・航空路線拡大への期待感"],
-  ["semiconductor-export", 19, "security", "반도체 수출 규제 완화 후속 조치, 기업 협력 전망 엇갈려", "半導体輸出規制緩和の後続措置、企業協力の見通し分かれる"],
-  ["heritage-return", 17, "labor", "문화재 반환 협의 재점화, 공동 조사 방식 두고 시각차", "文化財返還協議が再燃、共同調査方式をめぐり見方に差"],
-  ["climate-summit", 15, "water", "기후 정상회의 공동 의제 조율, 에너지 전환 해법에 관심", "気候首脳会議の共同議題調整、エネルギー転換策に関心"],
-];
-
-function createGeneratedEvent([id, count, visual, koHeadline, jaHeadline]) {
-  return {
-    id,
-    count,
-    visual,
-    headline: {
-      ko: koHeadline,
-      ja: jaHeadline,
-    },
-    deck: {
-      ko: "양국 정부와 관련 단체는 현안의 실무 조정과 사회적 수용성을 함께 검토하고 있으며, 언론은 책임과 협력의 균형을 다르게 해석하고 있다.",
-      ja: "両国政府と関係団体は実務調整と社会的受容性を検討しており、報道は責任と協力の均衡を異なる角度から解釈している。",
-    },
-    facts: {
-      ko: [
-        "양국 관계자가 실무 협의를 이어가고 있다.",
-        "정책 효과와 국내 여론을 둘러싼 해석이 함께 제기됐다.",
-        "후속 조치의 범위와 속도는 추가 논의가 필요한 상태다.",
-      ],
-      ja: [
-        "両国関係者は実務協議を続けている。",
-        "政策効果と国内世論をめぐる解釈があわせて示された。",
-        "今後の措置の範囲と速度には追加協議が必要な状況だ。",
-      ],
-    },
-    outlets: [],
-  };
-}
-
-function makeOutlet(event, side, seed, index) {
-  const korean = side === "korea";
-  const order = index + 1;
-
-  return {
-    id: `${event.id}-${side}-${order}`,
-    side,
-    outlet: seed.outlet,
-    tags: korean
-      ? ["국내 여론", "정책 책임", "후속 조치"]
-      : ["政府対応", "地域影響", "継続協議"],
-    headline: {
-      ko: korean
-        ? `${seed.outlet}, ${event.headline.ko}에 국내 여론 주목`
-        : `${seed.outlet}, ${event.headline.ko}에 정부 대응 초점`,
-      ja: korean
-        ? `${seed.outlet}、「${event.headline.ja}」で国内世論に注目`
-        : `${seed.outlet}、「${event.headline.ja}」で政府対応に焦点`,
-    },
-    summary: {
-      ko: korean
-        ? `${seed.outlet}는 국내 여론과 정책 책임을 중심으로 ${event.headline.ko} 이슈를 해석한다.`
-        : `${seed.outlet}는 정부 대응과 지역 영향을 중심으로 ${event.headline.ko} 이슈를 해석한다.`,
-      ja: korean
-        ? `${seed.outlet}は国内世論と政策責任を中心に「${event.headline.ja}」を解釈する。`
-        : `${seed.outlet}は政府対応と地域影響を中心に「${event.headline.ja}」を解釈する。`,
-    },
-    url: seed.url,
-  };
-}
-
 function getOutletHeadline(outlet, language) {
-  return outlet.headline?.[language] ?? outlet.headline?.ko ?? outlet.tags?.[0] ?? outlet.outlet;
-}
-
-function normalizeEventOutlets(event) {
-  const normalizeSide = (side, seeds) => {
-    const existing = event.outlets.filter((outlet) => outlet.side === side).slice(0, 5);
-    const existingNames = new Set(existing.map((outlet) => outlet.outlet));
-    const additions = seeds
-      .filter((seed) => !existingNames.has(seed.outlet))
-      .map((seed, index) => makeOutlet(event, side, seed, existing.length + index));
-
-    return [...existing, ...additions].slice(0, 5);
-  };
-
-  return {
-    ...event,
-    outlets: [
-      ...normalizeSide("korea", koreanOutletSeeds),
-      ...normalizeSide("japan", japaneseOutletSeeds),
-    ],
-  };
-}
-
-function createTopTenEvents(baseEvents) {
-  return [...baseEvents, ...extraEventSeeds.map(createGeneratedEvent)]
-    .slice(0, 10)
-    .map(normalizeEventOutlets);
+  return (
+    outlet.headline?.[language] ??
+    outlet.headline?.ko ??
+    outlet.tags?.[0] ??
+    outlet.outlet
+  );
 }
 
 export default function App() {
@@ -448,9 +98,13 @@ export default function App() {
   const searchRef = useRef(null);
   const t = copy[language];
 
-  const orderedEvents = useMemo(() => createTopTenEvents(events), []);
+  const { data: events = [], isLoading, isError, error } = useTopics();
 
-  const activeEvent = selectedEvent ?? orderedEvents[activeIndex] ?? events[0];
+  useEffect(() => {
+    if (activeIndex > events.length - 1) {
+      setActiveIndex(0);
+    }
+  }, [events.length, activeIndex]);
 
   useEffect(() => {
     if (!isSearchOpen) return undefined;
@@ -541,20 +195,64 @@ export default function App() {
           </span>
         </div>
 
-        <ProgressDots total={10} current={activeIndex} maxCurrent={orderedEvents.length - 1} />
-
-        <SwipeDeck
-          events={orderedEvents}
+        <DeckSection
+          events={events}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
           activeIndex={activeIndex}
+          setActiveIndex={setActiveIndex}
           language={language}
           t={t}
           onOpen={setSelectedEvent}
-          onNavigate={setActiveIndex}
-          onReset={() => setActiveIndex(0)}
-          fallbackEvent={activeEvent}
         />
       </section>
     </main>
+  );
+}
+
+function DeckSection({
+  events,
+  isLoading,
+  isError,
+  error,
+  activeIndex,
+  setActiveIndex,
+  language,
+  t,
+  onOpen,
+}) {
+  if (isLoading) {
+    return <p className="deck-status">{t.loading}</p>;
+  }
+  if (isError) {
+    return (
+      <p className="deck-status deck-status-error">
+        {t.error}
+        {error?.message ? <small>{error.message}</small> : null}
+      </p>
+    );
+  }
+  if (events.length === 0) {
+    return <p className="deck-status">{t.empty}</p>;
+  }
+
+  const maxCurrent = Math.max(events.length - 1, 0);
+
+  return (
+    <>
+      <ProgressDots total={events.length} current={activeIndex} maxCurrent={maxCurrent} />
+      <SwipeDeck
+        events={events}
+        activeIndex={activeIndex}
+        language={language}
+        t={t}
+        onOpen={onOpen}
+        onNavigate={setActiveIndex}
+        onReset={() => setActiveIndex(0)}
+        fallbackEvent={events[activeIndex] ?? events[0]}
+      />
+    </>
   );
 }
 
@@ -713,7 +411,7 @@ function NewsCard({ event, language, t, muted = false }) {
     <article className={`news-card ${muted ? "muted" : ""}`}>
       <h2>{event.headline[language]}</h2>
       <IncidentVisual type={event.visual} />
-      <p className="deck-copy">{event.deck[language]}</p>
+      {event.deck[language] ? <p className="deck-copy">{event.deck[language]}</p> : null}
       <p className="tap-copy">{t.tap}</p>
     </article>
   );
@@ -733,16 +431,20 @@ function IncidentVisual({ type }) {
 }
 
 function NarrativeMap({ event, language, t, onBack }) {
-  const [openCard, setOpenCard] = useState(null);
+  const [openOutletId, setOpenOutletId] = useState(null);
   const [revealed, setRevealed] = useState(false);
-  const koreanOutlets = event.outlets.filter((item) => item.side === "korea");
-  const japaneseOutlets = event.outlets.filter((item) => item.side === "japan");
-  const selectedOutlet = event.outlets.find((item) => item.id === openCard);
+  const { data: outlets = [], isLoading, isError, error } = useArticles(event.topicId);
+
+  const koreanOutlets = outlets.filter((item) => item.side === "korea");
+  const japaneseOutlets = outlets.filter((item) => item.side === "japan");
+  const selectedOutlet = outlets.find((item) => item.id === openOutletId);
   const selectedOutletIndex = selectedOutlet
     ? (selectedOutlet.side === "korea" ? koreanOutlets : japaneseOutlets).findIndex(
         (item) => item.id === selectedOutlet.id,
       ) + 1
     : 0;
+
+  const facts = event.facts?.[language] ?? [];
 
   return (
     <main className="map-shell">
@@ -758,18 +460,22 @@ function NarrativeMap({ event, language, t, onBack }) {
         <h1>{event.headline[language]}</h1>
         <div>
           <Globe2 size={18} />
-          <span>{event.count} clustered articles</span>
+          <span>
+            {outlets.length} {t.articles}
+          </span>
         </div>
       </section>
 
-      <section className="consensus-strip">
-        <h2>{t.consensus}</h2>
-        <div>
-          {event.facts[language].map((fact) => (
-            <p key={fact}>{fact}</p>
-          ))}
-        </div>
-      </section>
+      {facts.length > 0 && (
+        <section className="consensus-strip">
+          <h2>{t.consensus}</h2>
+          <div>
+            {facts.map((fact) => (
+              <p key={fact}>{fact}</p>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="map-stage" aria-label="Korea Japan narrative map">
         <div className="map-image" aria-hidden="true" />
@@ -780,14 +486,23 @@ function NarrativeMap({ event, language, t, onBack }) {
           <Eye size={18} />
           {revealed ? t.hide : t.reveal}
         </button>
+
+        {isLoading && <p className="map-status">{t.loading}</p>}
+        {isError && (
+          <p className="map-status map-status-error">
+            {t.error}
+            {error?.message ? <small>{error.message}</small> : null}
+          </p>
+        )}
+
         <OutletCluster
           title={t.korea}
           className="korea-cluster"
           outlets={koreanOutlets}
           language={language}
           revealed={revealed}
-          openCard={openCard}
-          setOpenCard={setOpenCard}
+          openCard={openOutletId}
+          setOpenCard={setOpenOutletId}
           t={t}
         />
         <OutletCluster
@@ -796,51 +511,36 @@ function NarrativeMap({ event, language, t, onBack }) {
           outlets={japaneseOutlets}
           language={language}
           revealed={revealed}
-          openCard={openCard}
-          setOpenCard={setOpenCard}
+          openCard={openOutletId}
+          setOpenCard={setOpenOutletId}
           t={t}
         />
       </section>
 
       {selectedOutlet && (
-        <div className="narrative-modal-backdrop" role="presentation" onClick={() => setOpenCard(null)}>
-          <article
-            className="narrative-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="narrative-modal-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className="modal-x-button"
-              aria-label={t.close}
-              onClick={() => setOpenCard(null)}
-            >
-              <X size={16} />
-            </button>
-            <span className="source-name">
-              {revealed ? selectedOutlet.outlet : `Source ${selectedOutletIndex}`}
-            </span>
-            <h2 id="narrative-modal-title">{getOutletHeadline(selectedOutlet, language)}</h2>
-            <p>{selectedOutlet.summary[language]}</p>
-            <div>
-              <a href={selectedOutlet.url} target="_blank" rel="noreferrer">
-                <ExternalLink size={16} />
-                {t.full}
-              </a>
-              <button onClick={() => setOpenCard(null)}>
-                <X size={16} />
-                {t.close}
-              </button>
-            </div>
-          </article>
-        </div>
+        <OutletDetailModal
+          outlet={selectedOutlet}
+          language={language}
+          t={t}
+          revealed={revealed}
+          index={selectedOutletIndex}
+          onClose={() => setOpenOutletId(null)}
+        />
       )}
     </main>
   );
 }
 
-function OutletCluster({ title, className, outlets, language, revealed, openCard, setOpenCard, t }) {
+function OutletCluster({
+  title,
+  className,
+  outlets,
+  language,
+  revealed,
+  openCard,
+  setOpenCard,
+  t,
+}) {
   return (
     <div className={`outlet-cluster ${className}`}>
       <h2>{title}</h2>
@@ -849,27 +549,54 @@ function OutletCluster({ title, className, outlets, language, revealed, openCard
         return (
           <article key={outlet.id} className={`outlet-card ${isOpen ? "open" : ""}`}>
             <button onClick={() => setOpenCard(isOpen ? null : outlet.id)}>
-              <span className="source-name">{revealed ? outlet.outlet : `Source ${index + 1}`}</span>
+              <span className="source-name">
+                {revealed ? outlet.outlet : `Source ${index + 1}`}
+              </span>
               <strong>{getOutletHeadline(outlet, language)}</strong>
             </button>
-            {isOpen && (
-              <div className="expanded-narrative">
-                <p>{outlet.summary[language]}</p>
-                <div>
-                  <a href={outlet.url} target="_blank" rel="noreferrer">
-                    <ExternalLink size={16} />
-                    {t.full}
-                  </a>
-                  <button onClick={() => setOpenCard(null)}>
-                    <X size={16} />
-                    {t.close}
-                  </button>
-                </div>
-              </div>
-            )}
           </article>
         );
       })}
+    </div>
+  );
+}
+
+function OutletDetailModal({ outlet, language, t, revealed, index, onClose }) {
+  const { data: detail, isLoading } = useArticle(outlet.articleId);
+  const enriched = useMemo(() => mergeArticleDetail(outlet, detail), [outlet, detail]);
+
+  return (
+    <div className="narrative-modal-backdrop" role="presentation" onClick={onClose}>
+      <article
+        className="narrative-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="narrative-modal-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button className="modal-x-button" aria-label={t.close} onClick={onClose}>
+          <X size={16} />
+        </button>
+        <span className="source-name">
+          {revealed ? enriched.outlet : `Source ${index}`}
+        </span>
+        <h2 id="narrative-modal-title">{getOutletHeadline(enriched, language)}</h2>
+        <p>
+          {enriched.summary[language] || (isLoading ? t.loading : "")}
+        </p>
+        <div>
+          {enriched.url ? (
+            <a href={enriched.url} target="_blank" rel="noreferrer">
+              <ExternalLink size={16} />
+              {t.full}
+            </a>
+          ) : null}
+          <button onClick={onClose}>
+            <X size={16} />
+            {t.close}
+          </button>
+        </div>
+      </article>
     </div>
   );
 }

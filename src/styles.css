@@ -1578,3 +1578,41 @@ button {
     height: 138px;
   }
 }
+
+.deck-status,
+.map-status {
+  display: grid;
+  gap: 6px;
+  margin: 60px 0 0;
+  padding: 18px;
+  border-radius: 14px;
+  background: #eef1f4;
+  color: #6b7480;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.map-status {
+  position: relative;
+  z-index: 3;
+  max-width: 480px;
+  margin: 24px auto 0;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 24px rgba(35, 45, 60, 0.08);
+}
+
+.deck-status-error,
+.map-status-error {
+  background: #fdecec;
+  color: #93333a;
+}
+
+.deck-status small,
+.map-status small {
+  display: block;
+  color: inherit;
+  opacity: 0.7;
+  font-weight: 600;
+  word-break: break-word;
+}
