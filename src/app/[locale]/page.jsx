@@ -458,6 +458,9 @@ function NarrativeMap({ event, language, t, onBack }) {
       <section className="map-intro">
         <p>{t.neutral}</p>
         <h1>{event.headline[language]}</h1>
+        {event.deck[language] ? (
+          <p className="map-summary">{event.deck[language]}</p>
+        ) : null}
         <div>
           <Globe2 size={18} />
           <span>
