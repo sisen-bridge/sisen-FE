@@ -67,8 +67,8 @@ button {
 }
 
 .brand-mark img {
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 38px;
   flex: 0 0 auto;
   object-fit: contain;
 }
@@ -777,8 +777,8 @@ button {
   }
 
   .brand-mark img {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 34px;
   }
 
   .brand-mark span {
@@ -846,5 +846,30 @@ button {
 
   .deck-copy {
     font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand-mark {
+    gap: 6px;
+  }
+
+  .brand-mark img {
+    width: 44px;
+    height: 30px;
+  }
+
+  .brand-mark span {
+    font-size: 19px;
+  }
+
+  .brand-mark small {
+    display: none;
+  }
+
+  .language-switch button {
+    min-width: 48px;
+    padding-inline: 8px;
+    font-size: 12px;
   }
 }
