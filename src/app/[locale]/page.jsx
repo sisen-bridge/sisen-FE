@@ -709,6 +709,21 @@ function OutletCluster({ title, className, outlets, language, revealed, openCard
               <strong>{outlet.tags[0]}</strong>
               <small>{outlet.tags.slice(1).join(" · ")}</small>
             </button>
+            {isOpen && (
+              <div className="expanded-narrative">
+                <p>{outlet.summary[language]}</p>
+                <div>
+                  <a href={outlet.url} target="_blank" rel="noreferrer">
+                    <ExternalLink size={16} />
+                    {t.full}
+                  </a>
+                  <button onClick={() => setOpenCard(null)}>
+                    <X size={16} />
+                    {t.close}
+                  </button>
+                </div>
+              </div>
+            )}
           </article>
         );
       })}

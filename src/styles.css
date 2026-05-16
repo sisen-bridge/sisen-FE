@@ -128,7 +128,14 @@ button {
   box-shadow: 0 4px 14px rgba(51, 65, 85, 0.12);
 }
 
+.headline-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .headline-block p {
+  width: 100%;
   margin: 32px 0 14px;
   color: #b6bec8;
   font-size: 18px;
@@ -136,11 +143,14 @@ button {
 }
 
 .headline-block h1 {
-  margin: 0 0 18px;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 14px 18px 0;
   color: #070d15;
   font-size: 42px;
   line-height: 1.04;
   letter-spacing: 0;
+  vertical-align: middle;
 }
 
 .info-pill,
@@ -153,6 +163,7 @@ button {
 }
 
 .info-pill {
+  min-width: 0;
   max-width: 100%;
   padding: 9px 13px;
   border-radius: 14px;
@@ -160,6 +171,14 @@ button {
   color: #737d8a;
   font-size: 15px;
   font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.info-pill svg {
+  flex: 0 0 auto;
 }
 
 .progress-bar {
@@ -787,7 +806,7 @@ button {
   position: fixed;
   inset: 0;
   z-index: 20;
-  display: grid;
+  display: none;
   place-items: center;
   padding: 22px;
   background: rgba(14, 20, 29, 0.42);
@@ -879,6 +898,10 @@ button {
 }
 
 @media (min-width: 900px) {
+  .narrative-modal-backdrop {
+    display: none;
+  }
+
   .phone-shell {
     padding: 10px 22px;
     background: #e8edf2;
@@ -914,7 +937,6 @@ button {
   }
 
   .info-pill {
-    transform: translateY(-10px);
     font-size: 16px;
   }
 
@@ -1034,19 +1056,22 @@ button {
   }
 
   .headline-block h1 {
-    margin-bottom: 12px;
-    font-size: 31px;
+    margin: 0 8px 0 0;
+    font-size: clamp(28px, 8.6vw, 31px);
+    white-space: nowrap;
   }
 
   .info-pill {
-    padding: 7px 10px;
+    flex: 0 1 auto;
+    gap: 5px;
+    padding: 6px 8px;
     border-radius: 12px;
-    font-size: 12px;
+    font-size: clamp(8px, 2.5vw, 10px);
   }
 
   .info-pill svg {
-    width: 15px;
-    height: 15px;
+    width: 13px;
+    height: 13px;
   }
 
   .progress-bar {
@@ -1068,7 +1093,7 @@ button {
 
   .deck {
     height: 410px;
-    margin: 32px -2px 0;
+    margin: 46px -2px 0;
   }
 
   .deck-card {
@@ -1231,6 +1256,7 @@ button {
   }
 
   .expanded-narrative {
+    display: none;
     gap: 10px;
     padding: 0 10px 10px;
   }
@@ -1258,6 +1284,7 @@ button {
   }
 
   .narrative-modal-backdrop {
+    display: grid;
     align-items: center;
     padding: 20px;
   }
