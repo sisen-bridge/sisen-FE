@@ -192,8 +192,8 @@ button {
 
 .deck {
   position: relative;
-  height: 438px;
-  margin: 54px -4px 0;
+  height: 528px;
+  margin: 44px -4px 0;
   perspective: 1000px;
 }
 
@@ -240,7 +240,7 @@ button {
 
 .deck-card.layer-1 .news-card,
 .deck-card.layer-2 .news-card {
-  min-height: 430px;
+  min-height: 520px;
   box-shadow: 0 8px 18px rgba(22, 30, 43, 0.1);
 }
 
@@ -250,8 +250,10 @@ button {
 }
 
 .news-card {
-  min-height: 438px;
-  padding: 28px 24px 22px;
+  min-height: 528px;
+  display: flex;
+  flex-direction: column;
+  padding: 36px 26px 26px;
   border: 1px solid #dce2e8;
   border-radius: 18px;
   background: #ffffff;
@@ -298,8 +300,8 @@ button {
 .news-card h2 {
   margin: 0;
   color: #090f18;
-  font-size: 22px;
-  line-height: 1.16;
+  font-size: 27px;
+  line-height: 1.17;
   letter-spacing: 0;
   display: -webkit-box;
   overflow: hidden;
@@ -308,20 +310,20 @@ button {
 }
 
 .deck-copy {
-  margin: 13px 0;
+  margin: 0;
   color: #606b78;
-  font-size: 14px;
-  line-height: 1.34;
+  font-size: 15px;
+  line-height: 1.42;
   font-weight: 750;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
 }
 
 .incident-image {
-  height: 118px;
-  margin: 13px 0 13px;
+  height: 230px;
+  margin: 30px 0 24px;
   overflow: hidden;
   border-radius: 6px;
   background: linear-gradient(135deg, #d7dde4 0%, #eef1f4 100%);
@@ -497,9 +499,9 @@ button {
 }
 
 .tap-copy {
-  margin: 12px 0 0;
+  margin: auto 0 0;
   color: #9aa3ae;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -612,7 +614,7 @@ button {
 
 .map-stage {
   max-width: 1180px;
-  min-height: 670px;
+  min-height: 760px;
   position: relative;
   margin: 28px auto 0;
   overflow: hidden;
@@ -657,7 +659,7 @@ button {
 .outlet-cluster {
   position: absolute;
   display: grid;
-  gap: 12px;
+  gap: 9px;
   width: min(310px, 38vw);
   z-index: 3;
 }
@@ -676,12 +678,12 @@ button {
 
 .korea-cluster {
   left: 8%;
-  top: 30%;
+  top: 18%;
 }
 
 .japan-cluster {
   right: 7%;
-  top: 36%;
+  top: 18%;
 }
 
 .outlet-card {
@@ -697,7 +699,7 @@ button {
   width: 100%;
   display: grid;
   gap: 4px;
-  padding: 14px;
+  padding: 12px;
   background: transparent;
   color: #111926;
   text-align: left;
@@ -799,7 +801,7 @@ button {
   }
 
   .deck {
-    margin-top: 48px;
+    margin-top: 40px;
   }
 
   .map-shell {
@@ -811,7 +813,11 @@ button {
   }
 
   .map-stage {
-    min-height: 780px;
+    min-height: 0;
+    display: grid;
+    gap: 22px;
+    align-content: start;
+    padding: 190px 14px 24px;
   }
 
   .map-image {
@@ -821,31 +827,34 @@ button {
   }
 
   .outlet-cluster {
-    width: calc(100% - 28px);
+    width: 100%;
+    position: relative;
   }
 
   .korea-cluster {
-    left: 14px;
-    top: 220px;
+    left: auto;
+    top: auto;
   }
 
   .japan-cluster {
-    right: 14px;
-    top: 510px;
+    right: auto;
+    top: auto;
   }
 }
 
 @media (max-width: 410px) {
   .news-card {
-    padding: 25px 21px 20px;
+    min-height: 500px;
+    padding: 32px 22px 24px;
   }
 
   .news-card h2 {
-    font-size: 21px;
+    font-size: 24px;
   }
 
-  .deck-copy {
-    font-size: 13px;
+  .incident-image {
+    height: 210px;
+    margin: 26px 0 22px;
   }
 }
 

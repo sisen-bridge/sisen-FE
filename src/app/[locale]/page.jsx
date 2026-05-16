@@ -256,13 +256,116 @@ const events = [
   },
 ];
 
+const koreanOutletSeeds = [
+  { outlet: "한겨레", url: "https://www.hani.co.kr/" },
+  { outlet: "경향신문", url: "https://www.khan.co.kr/" },
+  { outlet: "중앙일보", url: "https://www.joongang.co.kr/" },
+  { outlet: "조선일보", url: "https://www.chosun.com/" },
+  { outlet: "동아일보", url: "https://www.donga.com/" },
+];
+
+const japaneseOutletSeeds = [
+  { outlet: "朝日新聞", url: "https://www.asahi.com/" },
+  { outlet: "毎日新聞", url: "https://mainichi.jp/" },
+  { outlet: "読売新聞", url: "https://www.yomiuri.co.jp/" },
+  { outlet: "NHK", url: "https://www3.nhk.or.jp/news/" },
+  { outlet: "日本経済新聞", url: "https://www.nikkei.com/" },
+];
+
+const extraEventSeeds = [
+  ["trade-minerals", 31, "security", "핵심 광물 공급망 협의 확대, 경제안보 보도 온도차", "重要鉱物の供給網協議拡大、経済安保報道に温度差"],
+  ["student-exchange", 26, "labor", "한일 청년 교류 재개 움직임, 역사 교육 논의와 함께 주목", "日韓青年交流再開の動き、歴史教育議論とともに注目"],
+  ["fishery-inspection", 24, "water", "수산물 검사 강화 발표, 소비자 불안과 지역 경제 영향 부각", "水産物検査強化を発表、消費者不安と地域経済への影響が焦点"],
+  ["visa-tourism", 22, "labor", "관광 회복세 속 비자·항공 노선 확대를 둘러싼 기대감", "観光回復の中でビザ・航空路線拡大への期待感"],
+  ["semiconductor-export", 19, "security", "반도체 수출 규제 완화 후속 조치, 기업 협력 전망 엇갈려", "半導体輸出規制緩和の後続措置、企業協力の見通し分かれる"],
+  ["heritage-return", 17, "labor", "문화재 반환 협의 재점화, 공동 조사 방식 두고 시각차", "文化財返還協議が再燃、共同調査方式をめぐり見方に差"],
+  ["climate-summit", 15, "water", "기후 정상회의 공동 의제 조율, 에너지 전환 해법에 관심", "気候首脳会議の共同議題調整、エネルギー転換策に関心"],
+];
+
+function createGeneratedEvent([id, count, visual, koHeadline, jaHeadline]) {
+  return {
+    id,
+    count,
+    visual,
+    headline: {
+      ko: koHeadline,
+      ja: jaHeadline,
+    },
+    deck: {
+      ko: "양국 정부와 관련 단체는 현안의 실무 조정과 사회적 수용성을 함께 검토하고 있으며, 언론은 책임과 협력의 균형을 다르게 해석하고 있다.",
+      ja: "両国政府と関係団体は実務調整と社会的受容性を検討しており、報道は責任と協力の均衡を異なる角度から解釈している。",
+    },
+    facts: {
+      ko: [
+        "양국 관계자가 실무 협의를 이어가고 있다.",
+        "정책 효과와 국내 여론을 둘러싼 해석이 함께 제기됐다.",
+        "후속 조치의 범위와 속도는 추가 논의가 필요한 상태다.",
+      ],
+      ja: [
+        "両国関係者は実務協議を続けている。",
+        "政策効果と国内世論をめぐる解釈があわせて示された。",
+        "今後の措置の範囲と速度には追加協議が必要な状況だ。",
+      ],
+    },
+    outlets: [],
+  };
+}
+
+function makeOutlet(event, side, seed, index) {
+  const korean = side === "korea";
+
+  return {
+    id: `${event.id}-${side}-${index + 1}`,
+    side,
+    outlet: seed.outlet,
+    tags: korean
+      ? ["국내 여론", "정책 책임", "후속 조치"]
+      : ["政府対応", "地域影響", "継続協議"],
+    summary: {
+      ko: korean
+        ? `${seed.outlet}는 국내 여론과 정책 책임을 중심으로 ${event.headline.ko} 이슈를 해석한다.`
+        : `${seed.outlet}는 정부 대응과 지역 영향을 중심으로 ${event.headline.ko} 이슈를 해석한다.`,
+      ja: korean
+        ? `${seed.outlet}は国内世論と政策責任を中心に「${event.headline.ja}」を解釈する。`
+        : `${seed.outlet}は政府対応と地域影響を中心に「${event.headline.ja}」を解釈する。`,
+    },
+    url: seed.url,
+  };
+}
+
+function normalizeEventOutlets(event) {
+  const normalizeSide = (side, seeds) => {
+    const existing = event.outlets.filter((outlet) => outlet.side === side).slice(0, 5);
+    const existingNames = new Set(existing.map((outlet) => outlet.outlet));
+    const additions = seeds
+      .filter((seed) => !existingNames.has(seed.outlet))
+      .map((seed, index) => makeOutlet(event, side, seed, existing.length + index));
+
+    return [...existing, ...additions].slice(0, 5);
+  };
+
+  return {
+    ...event,
+    outlets: [
+      ...normalizeSide("korea", koreanOutletSeeds),
+      ...normalizeSide("japan", japaneseOutletSeeds),
+    ],
+  };
+}
+
+function createTopTenEvents(baseEvents) {
+  return [...baseEvents, ...extraEventSeeds.map(createGeneratedEvent)]
+    .slice(0, 10)
+    .map(normalizeEventOutlets);
+}
+
 export default function App() {
   const [language, setLanguage] = useState("ko");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const t = copy[language];
 
-  const orderedEvents = useMemo(() => events, []);
+  const orderedEvents = useMemo(() => createTopTenEvents(events), []);
 
   const activeEvent = selectedEvent ?? orderedEvents[activeIndex] ?? events[0];
 
@@ -467,16 +570,8 @@ function NewsCard({ event, language, t, muted = false }) {
   return (
     <article className={`news-card ${muted ? "muted" : ""}`}>
       <h2>{event.headline[language]}</h2>
-      <p className="deck-copy">{event.deck[language]}</p>
       <IncidentVisual type={event.visual} />
-      <ul>
-        {event.facts[language].map((fact) => (
-          <li key={fact}>
-            <span />
-            {fact}
-          </li>
-        ))}
-      </ul>
+      <p className="deck-copy">{event.deck[language]}</p>
       <p className="tap-copy">{t.tap}</p>
     </article>
   );
