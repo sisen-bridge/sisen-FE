@@ -71,6 +71,10 @@ const events = [
         side: "korea",
         outlet: "한겨레",
         tags: ["피해자 동의", "사과 표현", "절차적 정당성"],
+        headline: {
+          ko: "강제동원 해법, 피해자 동의 없는 속도전 논란",
+          ja: "徴用問題解決策、被害者同意なき拙速論議",
+        },
         summary: {
           ko: "피해자 중심 원칙이 충분히 반영됐는지에 초점을 맞추며, 외교적 속도보다 당사자 동의와 일본 측 책임 인정의 구체성을 강조한다.",
           ja: "被害者中心の原則が十分反映されたかに焦点を当て、外交的な速度より当事者の同意と日本側の責任認定の具体性を強調する。",
@@ -82,6 +86,10 @@ const events = [
         side: "korea",
         outlet: "조선일보",
         tags: ["관계 복원", "안보 협력", "미래지향"],
+        headline: {
+          ko: "한일 관계 복원 물꼬, 과거사 해법이 협력 재개의 시험대",
+          ja: "日韓関係回復へ、歴史問題解決策が協力再開の試金石に",
+        },
         summary: {
           ko: "한일 관계 복원의 필요성을 전면에 두고, 과거사 갈등 관리가 경제와 안보 협력의 재개 조건이라는 관점으로 설명한다.",
           ja: "日韓関係回復の必要性を前面に置き、歴史問題の管理が経済・安保協力再開の条件だという視点で説明する。",
@@ -93,6 +101,10 @@ const events = [
         side: "japan",
         outlet: "朝日新聞",
         tags: ["被害者救済", "歴史認識", "国内反発"],
+        headline: {
+          ko: "한국 내 반발 여전, 강제동원 합의의 사회적 수용성 과제로",
+          ja: "韓国内の反発なお、徴用合意は社会的受容が課題",
+        },
         summary: {
           ko: "한국 내 피해자 반발과 역사 인식의 긴장을 함께 다루며, 실무 합의가 사회적 수용성을 얻을 수 있는지가 핵심이라고 본다.",
           ja: "韓国内の被害者反発と歴史認識の緊張を扱い、実務合意が社会的受容性を得られるかを核心に置く。",
@@ -104,6 +116,10 @@ const events = [
         side: "japan",
         outlet: "読売新聞",
         tags: ["協定尊重", "外交安定", "再発防止"],
+        headline: {
+          ko: "1965년 협정 존중 속 한일 외교 안정화 모색",
+          ja: "1965年協定尊重のもと日韓外交の安定化を探る",
+        },
         summary: {
           ko: "1965년 협정의 안정성을 강조하고, 한국 정부가 국내 절차를 어떻게 정리하느냐가 관계 개선의 지속성을 좌우한다고 해석한다.",
           ja: "1965年協定の安定性を重視し、韓国政府が国内手続きをどう整理するかが関係改善の持続性を左右すると見る。",
@@ -142,6 +158,10 @@ const events = [
         side: "korea",
         outlet: "경향신문",
         tags: ["장기 영향", "검증 투명성", "소비자 불안"],
+        headline: {
+          ko: "후쿠시마 처리수 점검 공개에도 장기 영향 우려 남아",
+          ja: "福島処理水点検公表後も長期影響への懸念残る",
+        },
         summary: {
           ko: "단기 수치보다 장기 감시 체계와 정보 공개의 신뢰성을 묻고, 시민 불안이 과학 소통의 부족에서 커진다고 본다.",
           ja: "短期数値より長期監視体制と情報公開の信頼性を問い、市民不安は科学コミュニケーション不足で拡大すると見る。",
@@ -153,6 +173,10 @@ const events = [
         side: "korea",
         outlet: "중앙일보",
         tags: ["기준 충족", "외교 관리", "수산업"],
+        headline: {
+          ko: "처리수 기준 충족 발표, 수산업 불안 관리가 관건",
+          ja: "処理水基準満たす発表、水産業不安の管理が焦点",
+        },
         summary: {
           ko: "국제 기준과 국내 수산업 피해 관리 사이의 균형을 강조하며, 정부 설명 책임과 시장 안정 대책을 함께 다룬다.",
           ja: "国際基準と国内水産業被害管理の均衡を重視し、政府説明責任と市場安定策をあわせて扱う。",
@@ -164,6 +188,10 @@ const events = [
         side: "japan",
         outlet: "NHK",
         tags: ["基準値", "モニタリング", "風評被害"],
+        headline: {
+          ko: "처리수 방류 모니터링 결과 기준치 이하 확인",
+          ja: "処理水放出の監視結果、基準値下回ることを確認",
+        },
         summary: {
           ko: "측정치와 절차 설명을 중심으로 보도하며, 기준 이하 결과와 풍평 피해 대응을 주요 쟁점으로 제시한다.",
           ja: "測定値と手続き説明を中心に報じ、基準以下の結果と風評被害対応を主要論点として提示する。",
@@ -175,6 +203,10 @@ const events = [
         side: "japan",
         outlet: "毎日新聞",
         tags: ["説明責任", "漁業者", "近隣国"],
+        headline: {
+          ko: "정부 설명 책임 커져, 어업자와 주변국 신뢰 확보 과제",
+          ja: "政府の説明責任重く、漁業者と近隣国の信頼確保が課題",
+        },
         summary: {
           ko: "정부와 전력회사의 설명 책임을 강조하고, 어업 관계자와 주변국의 신뢰 확보가 방류 정책의 관건이라고 본다.",
           ja: "政府と電力会社の説明責任を強調し、漁業者と近隣国の信頼確保が放出政策の鍵だと見る。",
@@ -213,6 +245,10 @@ const events = [
         side: "korea",
         outlet: "동아일보",
         tags: ["북핵 대응", "실용 외교", "정보 협력"],
+        headline: {
+          ko: "한일 안보 대화 재개, 북핵 대응 정보 협력 속도",
+          ja: "日韓安保対話再開、北朝鮮核対応の情報協力加速",
+        },
         summary: {
           ko: "북핵과 지역 안보 위험을 중심에 두고, 한일 협력이 선택이 아니라 실용적 필요라는 방향으로 서사를 구성한다.",
           ja: "北朝鮮核と地域安保リスクを中心に、日韓協力は選択ではなく実用的必要だという流れで構成する。",
@@ -224,6 +260,10 @@ const events = [
         side: "korea",
         outlet: "오마이뉴스",
         tags: ["국내 동의", "역사 현안", "균형 외교"],
+        headline: {
+          ko: "역사 현안 남긴 채 안보 협력 앞세우는 정부에 우려",
+          ja: "歴史懸案残したまま安保協力を優先する政府に懸念",
+        },
         summary: {
           ko: "안보 협력의 필요성을 인정하되, 역사 현안이 정리되지 않은 상태에서 협력이 앞서가는 위험을 강조한다.",
           ja: "安保協力の必要性は認めつつ、歴史懸案が整理されないまま協力が先行する危険を強調する。",
@@ -235,6 +275,10 @@ const events = [
         side: "japan",
         outlet: "日本経済新聞",
         tags: ["供給網", "米国連携", "経済安保"],
+        headline: {
+          ko: "한일 안보 협력, 공급망과 경제안보까지 확대",
+          ja: "日韓安保協力、供給網と経済安保まで拡大",
+        },
         summary: {
           ko: "안보를 공급망과 기술 협력까지 확장해 다루며, 미국과의 삼각 공조가 경제 안정성에 미치는 의미를 부각한다.",
           ja: "安保を供給網と技術協力まで拡張して扱い、米国との三角連携が経済安定性に持つ意味を強調する。",
@@ -246,6 +290,10 @@ const events = [
         side: "japan",
         outlet: "産経新聞",
         tags: ["抑止力", "同盟網", "対北朝鮮"],
+        headline: {
+          ko: "대북 억지력 강화 위해 한일 안보 협력 지속 필요",
+          ja: "対北朝鮮抑止力強化へ日韓安保協力の継続必要",
+        },
         summary: {
           ko: "억지력과 동맹 네트워크 강화를 핵심으로 제시하며, 한국의 정책 지속성이 일본의 신뢰 판단 기준이라고 본다.",
           ja: "抑止力と同盟網強化を核心に据え、韓国政策の持続性が日本側の信頼判断基準だと見る。",
@@ -313,14 +361,23 @@ function createGeneratedEvent([id, count, visual, koHeadline, jaHeadline]) {
 
 function makeOutlet(event, side, seed, index) {
   const korean = side === "korea";
+  const order = index + 1;
 
   return {
-    id: `${event.id}-${side}-${index + 1}`,
+    id: `${event.id}-${side}-${order}`,
     side,
     outlet: seed.outlet,
     tags: korean
       ? ["국내 여론", "정책 책임", "후속 조치"]
       : ["政府対応", "地域影響", "継続協議"],
+    headline: {
+      ko: korean
+        ? `${seed.outlet}, ${event.headline.ko}에 국내 여론 주목`
+        : `${seed.outlet}, ${event.headline.ko}에 정부 대응 초점`,
+      ja: korean
+        ? `${seed.outlet}、「${event.headline.ja}」で国内世論に注目`
+        : `${seed.outlet}、「${event.headline.ja}」で政府対応に焦点`,
+    },
     summary: {
       ko: korean
         ? `${seed.outlet}는 국내 여론과 정책 책임을 중심으로 ${event.headline.ko} 이슈를 해석한다.`
@@ -331,6 +388,10 @@ function makeOutlet(event, side, seed, index) {
     },
     url: seed.url,
   };
+}
+
+function getOutletHeadline(outlet, language) {
+  return outlet.headline?.[language] ?? outlet.headline?.ko ?? outlet.tags?.[0] ?? outlet.outlet;
 }
 
 function normalizeEventOutlets(event) {
@@ -679,8 +740,7 @@ function NarrativeMap({ event, language, t, onBack }) {
             <span className="source-name">
               {revealed ? selectedOutlet.outlet : `Source ${selectedOutletIndex}`}
             </span>
-            <h2 id="narrative-modal-title">{selectedOutlet.tags[0]}</h2>
-            <small>{selectedOutlet.tags.slice(1).join(" · ")}</small>
+            <h2 id="narrative-modal-title">{getOutletHeadline(selectedOutlet, language)}</h2>
             <p>{selectedOutlet.summary[language]}</p>
             <div>
               <a href={selectedOutlet.url} target="_blank" rel="noreferrer">
@@ -709,8 +769,7 @@ function OutletCluster({ title, className, outlets, language, revealed, openCard
           <article key={outlet.id} className={`outlet-card ${isOpen ? "open" : ""}`}>
             <button onClick={() => setOpenCard(isOpen ? null : outlet.id)}>
               <span className="source-name">{revealed ? outlet.outlet : `Source ${index + 1}`}</span>
-              <strong>{outlet.tags[0]}</strong>
-              <small>{outlet.tags.slice(1).join(" · ")}</small>
+              <strong>{getOutletHeadline(outlet, language)}</strong>
             </button>
             {isOpen && (
               <div className="expanded-narrative">

@@ -762,8 +762,18 @@ button {
 
 .outlet-card strong {
   font-size: 18px;
-  line-height: 1.1;
+  line-height: 1.18;
   overflow-wrap: anywhere;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.outlet-card.open strong {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
 }
 
 .outlet-card small {
@@ -774,7 +784,7 @@ button {
 
 .expanded-narrative {
   display: grid;
-  gap: 14px;
+  gap: 10px;
   padding: 0 14px 14px;
 }
 
@@ -1270,8 +1280,9 @@ button {
   }
 
   .outlet-card strong {
-    font-size: 13px;
-    line-height: 1.1;
+    font-size: 12px;
+    line-height: 1.18;
+    -webkit-line-clamp: 2;
   }
 
   .outlet-card {
