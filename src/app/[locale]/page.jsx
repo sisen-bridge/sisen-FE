@@ -595,6 +595,12 @@ function NarrativeMap({ event, language, t, onBack }) {
   const [revealed, setRevealed] = useState(false);
   const koreanOutlets = event.outlets.filter((item) => item.side === "korea");
   const japaneseOutlets = event.outlets.filter((item) => item.side === "japan");
+  const selectedOutlet = event.outlets.find((item) => item.id === openCard);
+  const selectedOutletIndex = selectedOutlet
+    ? (selectedOutlet.side === "korea" ? koreanOutlets : japaneseOutlets).findIndex(
+        (item) => item.id === selectedOutlet.id,
+      ) + 1
+    : 0;
 
   return (
     <main className="map-shell">
@@ -650,6 +656,42 @@ function NarrativeMap({ event, language, t, onBack }) {
           t={t}
         />
       </section>
+
+      {selectedOutlet && (
+        <div className="narrative-modal-backdrop" role="presentation" onClick={() => setOpenCard(null)}>
+          <article
+            className="narrative-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="narrative-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="modal-x-button"
+              aria-label={t.close}
+              onClick={() => setOpenCard(null)}
+            >
+              <X size={16} />
+            </button>
+            <span className="source-name">
+              {revealed ? selectedOutlet.outlet : `Source ${selectedOutletIndex}`}
+            </span>
+            <h2 id="narrative-modal-title">{selectedOutlet.tags[0]}</h2>
+            <small>{selectedOutlet.tags.slice(1).join(" · ")}</small>
+            <p>{selectedOutlet.summary[language]}</p>
+            <div>
+              <a href={selectedOutlet.url} target="_blank" rel="noreferrer">
+                <ExternalLink size={16} />
+                {t.full}
+              </a>
+              <button onClick={() => setOpenCard(null)}>
+                <X size={16} />
+                {t.close}
+              </button>
+            </div>
+          </article>
+        </div>
+      )}
     </main>
   );
 }
@@ -667,21 +709,6 @@ function OutletCluster({ title, className, outlets, language, revealed, openCard
               <strong>{outlet.tags[0]}</strong>
               <small>{outlet.tags.slice(1).join(" · ")}</small>
             </button>
-            {isOpen && (
-              <div className="expanded-narrative">
-                <p>{outlet.summary[language]}</p>
-                <div>
-                  <a href={outlet.url} target="_blank" rel="noreferrer">
-                    <ExternalLink size={16} />
-                    {t.full}
-                  </a>
-                  <button onClick={() => setOpenCard(null)}>
-                    <X size={16} />
-                    {t.close}
-                  </button>
-                </div>
-              </div>
-            )}
           </article>
         );
       })}

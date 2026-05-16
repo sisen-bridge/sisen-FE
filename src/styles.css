@@ -783,6 +783,101 @@ button {
   color: #344052;
 }
 
+.narrative-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(14, 20, 29, 0.42);
+  backdrop-filter: blur(2px);
+}
+
+.narrative-modal {
+  width: min(100%, 520px);
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 28px;
+  border: 1px solid #dfe5eb;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 28px 90px rgba(13, 20, 31, 0.28);
+}
+
+.modal-x-button {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #eef2f5;
+  color: #344052;
+  cursor: pointer;
+}
+
+.narrative-modal h2,
+.narrative-modal p {
+  margin: 0;
+}
+
+.narrative-modal h2 {
+  padding-right: 34px;
+  color: #101722;
+  font-size: 28px;
+  line-height: 1.16;
+}
+
+.narrative-modal small {
+  color: #64707d;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.narrative-modal .source-name {
+  font-size: 14px;
+}
+
+.narrative-modal p {
+  margin-top: 8px;
+  color: #344052;
+  font-size: 17px;
+  line-height: 1.62;
+  font-weight: 750;
+}
+
+.narrative-modal div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.narrative-modal a,
+.narrative-modal div > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11px 16px;
+  border-radius: 999px;
+  background: #101722;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.narrative-modal div > button {
+  background: #eef2f5;
+  color: #344052;
+}
+
 @media (min-width: 900px) {
   .phone-shell {
     padding: 10px 22px;
@@ -1045,8 +1140,8 @@ button {
   }
 
   .map-intro h1 {
-    font-size: clamp(22px, 7.2vw, 31px);
-    line-height: 1.12;
+    font-size: clamp(20px, 6.5vw, 28px);
+    line-height: 1.14;
   }
 
   .map-intro div {
@@ -1076,12 +1171,12 @@ button {
 
   .map-stage {
     width: 100%;
+    height: clamp(430px, 112vw, 500px);
     min-height: 0;
-    display: grid;
-    gap: 14px;
-    align-content: start;
+    display: block;
     margin-top: 16px;
-    padding: 118px 12px 18px;
+    padding: 0;
+    border-radius: 14px;
   }
 
   .map-stage::after {
@@ -1089,36 +1184,50 @@ button {
   }
 
   .map-image {
-    inset: 0 -118%;
-    background-size: cover;
-    background-position: center;
+    inset: 0;
+    background-size: 146% auto;
+    background-repeat: no-repeat;
+    background-position: center 56%;
+    opacity: 0.92;
   }
 
   .outlet-cluster {
-    width: 100%;
-    position: relative;
-    gap: 7px;
+    width: 46%;
+    position: absolute;
+    gap: 5px;
   }
 
   .outlet-cluster h2 {
     width: fit-content;
     max-width: 100%;
+    margin-bottom: 2px;
     padding: 6px 9px;
-    font-size: 12px;
+    font-size: 10px;
+    box-shadow: 0 5px 14px rgba(35, 45, 60, 0.08);
   }
 
   .outlet-card > button {
-    gap: 3px;
-    padding: 9px 10px;
+    gap: 2px;
+    padding: 7px 8px;
   }
 
   .source-name,
   .outlet-card small {
-    font-size: 10px;
+    font-size: 9px;
+    line-height: 1.18;
   }
 
   .outlet-card strong {
-    font-size: 15px;
+    font-size: 13px;
+    line-height: 1.1;
+  }
+
+  .outlet-card {
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(213, 220, 228, 0.74);
+    box-shadow: 0 8px 18px rgba(28, 39, 54, 0.12);
+    backdrop-filter: blur(8px);
   }
 
   .expanded-narrative {
@@ -1139,13 +1248,58 @@ button {
   }
 
   .korea-cluster {
-    left: auto;
-    top: auto;
+    left: 3.5%;
+    top: 14%;
   }
 
   .japan-cluster {
-    right: auto;
-    top: auto;
+    right: 3.5%;
+    top: 14%;
+  }
+
+  .narrative-modal-backdrop {
+    align-items: center;
+    padding: 20px;
+  }
+
+  .narrative-modal {
+    width: min(100%, 382px);
+    gap: 8px;
+    padding: 22px 24px 20px;
+    border-radius: 10px;
+  }
+
+  .modal-x-button {
+    width: 28px;
+    height: 28px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .narrative-modal h2 {
+    padding-right: 30px;
+    font-size: 22px;
+  }
+
+  .narrative-modal small {
+    font-size: 12px;
+  }
+
+  .narrative-modal .source-name {
+    font-size: 12px;
+  }
+
+  .narrative-modal p {
+    margin-top: 6px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .narrative-modal a,
+  .narrative-modal div > button {
+    min-height: 40px;
+    padding: 9px 13px;
+    font-size: 13px;
   }
 }
 
