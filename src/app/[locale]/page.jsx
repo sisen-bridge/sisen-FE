@@ -259,14 +259,12 @@ const events = [
 export default function App() {
   const [language, setLanguage] = useState("ko");
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [dismissed, setDismissed] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(0);
   const t = copy[language];
 
-  const orderedEvents = useMemo(() => {
-    return events.filter((event) => !dismissed.includes(event.id));
-  }, [dismissed]);
+  const orderedEvents = useMemo(() => events, []);
 
-  const activeEvent = selectedEvent ?? orderedEvents[0] ?? events[0];
+  const activeEvent = selectedEvent ?? orderedEvents[activeIndex] ?? events[0];
 
   if (selectedEvent) {
     return (
@@ -284,20 +282,20 @@ export default function App() {
       <section className="home-screen">
         <header className="top-bar">
           <div className="brand-mark">
+            <img src="/shisen-logo.png" alt="" aria-hidden="true" />
             <span>Shisen</span>
             <small>시선 / 視線</small>
           </div>
-          <button className="text-button">{t.exit}</button>
-        </header>
 
-        <div className="language-switch" aria-label="language selector">
-          <button className={language === "ko" ? "active" : ""} onClick={() => setLanguage("ko")}>
-            한국어
-          </button>
-          <button className={language === "ja" ? "active" : ""} onClick={() => setLanguage("ja")}>
-            日本語
-          </button>
-        </div>
+          <div className="language-switch" aria-label="language selector">
+            <button className={language === "ko" ? "active" : ""} onClick={() => setLanguage("ko")}>
+              한국어
+            </button>
+            <button className={language === "ja" ? "active" : ""} onClick={() => setLanguage("ja")}>
+              日本語
+            </button>
+          </div>
+        </header>
 
         <div className="headline-block">
           <p>{t.date}</p>
@@ -308,15 +306,16 @@ export default function App() {
           </span>
         </div>
 
-        <ProgressDots total={events.length} current={events.length - orderedEvents.length} />
+        <ProgressDots total={10} current={activeIndex} maxCurrent={orderedEvents.length - 1} />
 
         <SwipeDeck
           events={orderedEvents}
+          activeIndex={activeIndex}
           language={language}
           t={t}
           onOpen={setSelectedEvent}
-          onDismiss={(id) => setDismissed((prev) => [...prev, id])}
-          onReset={() => setDismissed([])}
+          onNavigate={setActiveIndex}
+          onReset={() => setActiveIndex(0)}
           fallbackEvent={activeEvent}
         />
       </section>
@@ -324,17 +323,31 @@ export default function App() {
   );
 }
 
-function ProgressDots({ total, current }) {
+function ProgressDots({ total, current, maxCurrent }) {
+  const denominator = Math.max(maxCurrent, 1);
+  const progress = Math.min(current / denominator, 1);
+
   return (
-    <div className="progress-dots" aria-hidden="true">
-      {Array.from({ length: total }).map((_, index) => (
-        <span key={index} className={index === current ? "active" : ""} />
-      ))}
+    <div
+      className="progress-bar"
+      aria-label={`${current + 1} / ${total}`}
+      style={{ "--progress": progress }}
+    >
+      <span />
     </div>
   );
 }
 
-function SwipeDeck({ events, language, t, onOpen, onDismiss, onReset, fallbackEvent }) {
+function SwipeDeck({
+  events,
+  activeIndex,
+  language,
+  t,
+  onOpen,
+  onNavigate,
+  onReset,
+  fallbackEvent,
+}) {
   const [drag, setDrag] = useState({
     x: 0,
     y: 0,
@@ -343,7 +356,10 @@ function SwipeDeck({ events, language, t, onOpen, onDismiss, onReset, fallbackEv
     active: false,
     pointerId: null,
   });
-  const topEvent = events[0];
+  const topEvent = events[activeIndex];
+  const visibleEvents = [0, 1, 2]
+    .map((offset) => events[activeIndex + offset])
+    .filter(Boolean);
 
   function beginDrag(event) {
     if (!topEvent) return;
@@ -370,8 +386,10 @@ function SwipeDeck({ events, language, t, onOpen, onDismiss, onReset, fallbackEv
   function endDrag(event) {
     if (!drag.active || !topEvent || event.pointerId !== drag.pointerId) return;
     const moved = Math.abs(drag.x) > 10 || Math.abs(drag.y) > 10;
-    if (Math.abs(drag.x) > 110) {
-      onDismiss(topEvent.id);
+    if (drag.x > 110) {
+      onNavigate(Math.min(activeIndex + 1, events.length - 1));
+    } else if (drag.x < -110) {
+      onNavigate(Math.max(activeIndex - 1, 0));
     } else if (!moved) {
       onOpen(topEvent);
     }
@@ -392,7 +410,7 @@ function SwipeDeck({ events, language, t, onOpen, onDismiss, onReset, fallbackEv
 
   return (
     <div className="deck">
-      {events.slice(0, 3).map((event, index) => {
+      {visibleEvents.map((event, index) => {
         const isTop = index === 0;
         const style = isTop
           ? {
@@ -429,8 +447,11 @@ function SwipeDeck({ events, language, t, onOpen, onDismiss, onReset, fallbackEv
                 keyboardEvent.preventDefault();
                 onOpen(event);
               }
-              if (keyboardEvent.key === "ArrowLeft" || keyboardEvent.key === "ArrowRight") {
-                onDismiss(event.id);
+              if (keyboardEvent.key === "ArrowLeft") {
+                onNavigate(Math.max(activeIndex - 1, 0));
+              }
+              if (keyboardEvent.key === "ArrowRight") {
+                onNavigate(Math.min(activeIndex + 1, events.length - 1));
               }
             }}
           >
@@ -445,13 +466,6 @@ function SwipeDeck({ events, language, t, onOpen, onDismiss, onReset, fallbackEv
 function NewsCard({ event, language, t, muted = false }) {
   return (
     <article className={`news-card ${muted ? "muted" : ""}`}>
-      <div className="rank-pill">
-        <span>{event.count}</span>
-        <i />
-        <span>{language === "ko" ? "건" : "件"}</span>
-      </div>
-      <div className="card-rule" />
-      <p className="eyebrow">{t.neutral}</p>
       <h2>{event.headline[language]}</h2>
       <p className="deck-copy">{event.deck[language]}</p>
       <IncidentVisual type={event.visual} />
@@ -477,7 +491,6 @@ function IncidentVisual({ type }) {
       <div className="visual-line" />
       <div className="visual-person primary" />
       <div className="visual-person secondary" />
-      <div className="visual-badge" />
     </div>
   );
 }
