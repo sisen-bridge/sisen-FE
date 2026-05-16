@@ -1,0 +1,22 @@
+{
+  "common": {
+    "exit": "나가기",
+    "back": "목록",
+    "close": "닫기",
+    "reset": "다시 보기"
+  },
+  "home": {
+    "title": "시선 TOP10",
+    "window": "최근 10시간 동안 묶인 주요뉴스",
+    "tap": "카드를 눌러 양국 보도 관점을 비교하세요",
+    "neutral": "중립 헤드라인"
+  },
+  "narrative": {
+    "consensus": "합의된 사실",
+    "korea": "한국 보도",
+    "japan": "일본 보도",
+    "reveal": "언론사 보기",
+    "hide": "언론사 숨기기",
+    "full": "원문 보기"
+  }
+}
