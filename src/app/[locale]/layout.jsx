@@ -9,6 +9,11 @@ export const metadata = {
   description: "A shared linguistic bridge for comparing Korean and Japanese news narratives.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }

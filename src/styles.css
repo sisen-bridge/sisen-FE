@@ -15,9 +15,16 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
+  width: 100%;
   margin: 0;
   min-width: 320px;
+  overflow-x: hidden;
 }
 
 button,
@@ -522,14 +529,18 @@ button {
 }
 
 .map-shell {
+  width: 100%;
   min-height: 100vh;
   padding: 24px;
   background: #f5f7f9;
+  overflow-x: hidden;
 }
 
 .map-header {
+  width: min(100%, 1180px);
   max-width: 1180px;
   margin: 0 auto 24px;
+  flex-wrap: wrap;
 }
 
 .icon-label-button {
@@ -545,6 +556,7 @@ button {
 
 .map-intro,
 .consensus-strip {
+  width: min(100%, 1180px);
   max-width: 1180px;
   margin: 0 auto;
 }
@@ -572,6 +584,7 @@ button {
   font-size: clamp(28px, 4vw, 52px);
   line-height: 1.08;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .map-intro div {
@@ -613,6 +626,7 @@ button {
 }
 
 .map-stage {
+  width: min(100%, 1180px);
   max-width: 1180px;
   min-height: 760px;
   position: relative;
@@ -661,6 +675,7 @@ button {
   display: grid;
   gap: 9px;
   width: min(310px, 38vw);
+  min-width: 0;
   z-index: 3;
 }
 
@@ -697,6 +712,7 @@ button {
 
 .outlet-card > button {
   width: 100%;
+  min-width: 0;
   display: grid;
   gap: 4px;
   padding: 12px;
@@ -715,6 +731,7 @@ button {
 .outlet-card strong {
   font-size: 18px;
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 
 .outlet-card small {
@@ -735,6 +752,7 @@ button {
   font-size: 14px;
   line-height: 1.52;
   font-weight: 650;
+  overflow-wrap: anywhere;
 }
 
 .expanded-narrative div {
@@ -757,6 +775,7 @@ button {
   cursor: pointer;
   font-size: 13px;
   font-weight: 850;
+  white-space: nowrap;
 }
 
 .expanded-narrative button {
@@ -764,7 +783,116 @@ button {
   color: #344052;
 }
 
-@media (max-width: 760px) {
+@media (min-width: 900px) {
+  .phone-shell {
+    padding: 10px 22px;
+    background: #e8edf2;
+  }
+
+  .home-screen {
+    width: min(100%, 1168px);
+    min-height: min(848px, calc(100vh - 20px));
+    display: block;
+    border-radius: 30px;
+    padding: 42px clamp(46px, 5vw, 64px) 52px;
+  }
+
+  .top-bar {
+    margin-bottom: 4px;
+  }
+
+  .headline-block {
+    margin-top: 0;
+  }
+
+  .headline-block p {
+    margin: 0 0 14px;
+    font-size: 18px;
+  }
+
+  .headline-block h1 {
+    display: inline-flex;
+    max-width: none;
+    margin: 0 24px 0 0;
+    font-size: clamp(56px, 6vw, 76px);
+    vertical-align: middle;
+  }
+
+  .info-pill {
+    transform: translateY(-10px);
+    font-size: 16px;
+  }
+
+  .progress-bar {
+    width: calc(100% - 190px);
+    margin: 42px 0 0;
+  }
+
+  .deck {
+    width: min(100%, 920px);
+    height: 360px;
+    margin: 70px auto 0;
+  }
+
+  .deck-card {
+    width: 100%;
+    left: 0;
+  }
+
+  .deck-card.layer-1 {
+    transform: translateY(-28px) scale(0.985) rotate(1deg);
+  }
+
+  .deck-card.layer-2 {
+    transform: translateY(-50px) scale(0.97) rotate(-1deg);
+  }
+
+  .deck-card.layer-1 .news-card,
+  .deck-card.layer-2 .news-card {
+    min-height: 330px;
+  }
+
+  .news-card {
+    min-height: 340px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 38%);
+    grid-template-rows: auto 1fr auto;
+    column-gap: 42px;
+    padding: 44px 56px;
+    border-radius: 22px;
+  }
+
+  .news-card h2 {
+    grid-column: 1;
+    font-size: clamp(30px, 3vw, 42px);
+    line-height: 1.18;
+    -webkit-line-clamp: 2;
+  }
+
+  .deck-copy {
+    grid-column: 1;
+    align-self: center;
+    max-width: 520px;
+    font-size: 16px;
+    line-height: 1.45;
+    -webkit-line-clamp: 3;
+  }
+
+  .incident-image {
+    grid-column: 2;
+    grid-row: 1 / 4;
+    height: 100%;
+    min-height: 240px;
+    margin: 0;
+  }
+
+  .tap-copy {
+    grid-column: 1;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 899px) {
   .phone-shell {
     padding: 0;
     background: #ffffff;
@@ -775,49 +903,189 @@ button {
     min-height: 100vh;
     border-radius: 0;
     box-shadow: none;
-    padding: 28px 22px 0;
+    padding: 20px 18px 0;
+  }
+
+  .top-bar {
+    gap: 10px;
   }
 
   .brand-mark img {
-    width: 50px;
-    height: 34px;
+    width: 42px;
+    height: 28px;
   }
 
   .brand-mark span {
-    font-size: 21px;
+    font-size: 18px;
   }
 
   .brand-mark small {
-    font-size: 10px;
+    font-size: 9px;
+  }
+
+  .language-switch {
+    padding: 3px;
   }
 
   .language-switch button {
-    min-width: 54px;
-    padding-inline: 9px;
+    min-width: 48px;
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  .headline-block p {
+    margin: 20px 0 10px;
+    font-size: 14px;
   }
 
   .headline-block h1 {
-    font-size: 36px;
+    margin-bottom: 12px;
+    font-size: 31px;
+  }
+
+  .info-pill {
+    padding: 7px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  .info-pill svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    margin-top: 22px;
+  }
+
+  .progress-bar span {
+    width: 22px;
+    height: 22px;
+    left: calc(var(--progress) * (100% - 22px));
+    box-shadow: 0 0 0 10px rgba(63, 130, 246, 0.14);
+  }
+
+  .progress-bar::after {
+    height: 6px;
+    width: calc((var(--progress) * 100%) + 11px);
   }
 
   .deck {
-    margin-top: 40px;
+    height: 410px;
+    margin: 32px -2px 0;
+  }
+
+  .deck-card {
+    width: calc(100% - 4px);
+    left: 2px;
+  }
+
+  .deck-card.layer-1 .news-card,
+  .deck-card.layer-2 .news-card {
+    min-height: 400px;
+  }
+
+  .news-card {
+    min-height: 410px;
+    padding: 24px 20px 20px;
+    border-radius: 16px;
+  }
+
+  .news-card h2 {
+    font-size: 21px;
+    line-height: 1.18;
+    -webkit-line-clamp: 3;
+  }
+
+  .incident-image {
+    height: 160px;
+    margin: 20px 0 16px;
+  }
+
+  .deck-copy {
+    font-size: 12px;
+    line-height: 1.38;
+  }
+
+  .tap-copy {
+    font-size: 12px;
   }
 
   .map-shell {
-    padding: 16px;
+    width: min(100%, 430px);
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 20px 18px;
+    background: #ffffff;
+  }
+
+  .map-header {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .icon-label-button {
+    min-width: 0;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .icon-label-button svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .map-intro {
+    gap: 8px;
+  }
+
+  .map-intro p {
+    font-size: 11px;
+  }
+
+  .map-intro h1 {
+    font-size: clamp(22px, 7.2vw, 31px);
+    line-height: 1.12;
+  }
+
+  .map-intro div {
+    font-size: 12px;
+  }
+
+  .map-intro div svg {
+    width: 15px;
+    height: 15px;
   }
 
   .consensus-strip {
     grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px;
+  }
+
+  .consensus-strip h2 {
+    font-size: 15px;
+  }
+
+  .consensus-strip p {
+    font-size: 12px;
+    line-height: 1.35;
   }
 
   .map-stage {
+    width: 100%;
     min-height: 0;
     display: grid;
-    gap: 22px;
+    gap: 14px;
     align-content: start;
-    padding: 190px 14px 24px;
+    margin-top: 16px;
+    padding: 118px 12px 18px;
+  }
+
+  .map-stage::after {
+    display: none;
   }
 
   .map-image {
@@ -829,6 +1097,45 @@ button {
   .outlet-cluster {
     width: 100%;
     position: relative;
+    gap: 7px;
+  }
+
+  .outlet-cluster h2 {
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px 9px;
+    font-size: 12px;
+  }
+
+  .outlet-card > button {
+    gap: 3px;
+    padding: 9px 10px;
+  }
+
+  .source-name,
+  .outlet-card small {
+    font-size: 10px;
+  }
+
+  .outlet-card strong {
+    font-size: 15px;
+  }
+
+  .expanded-narrative {
+    gap: 10px;
+    padding: 0 10px 10px;
+  }
+
+  .expanded-narrative p {
+    font-size: 12px;
+    line-height: 1.38;
+  }
+
+  .expanded-narrative a,
+  .expanded-narrative button {
+    min-height: 32px;
+    padding: 7px 10px;
+    font-size: 11px;
   }
 
   .korea-cluster {
@@ -844,17 +1151,17 @@ button {
 
 @media (max-width: 410px) {
   .news-card {
-    min-height: 500px;
-    padding: 32px 22px 24px;
+    min-height: 390px;
+    padding: 22px 18px 18px;
   }
 
   .news-card h2 {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   .incident-image {
-    height: 210px;
-    margin: 26px 0 22px;
+    height: 150px;
+    margin: 18px 0 15px;
   }
 }
 
@@ -864,12 +1171,12 @@ button {
   }
 
   .brand-mark img {
-    width: 44px;
-    height: 30px;
+    width: 38px;
+    height: 25px;
   }
 
   .brand-mark span {
-    font-size: 19px;
+    font-size: 17px;
   }
 
   .brand-mark small {
@@ -877,8 +1184,24 @@ button {
   }
 
   .language-switch button {
-    min-width: 48px;
-    padding-inline: 8px;
-    font-size: 12px;
+    min-width: 44px;
+    padding-inline: 7px;
+    font-size: 11px;
+  }
+
+  .headline-block h1 {
+    font-size: 28px;
+  }
+
+  .deck {
+    height: 386px;
+  }
+
+  .news-card {
+    min-height: 386px;
+  }
+
+  .incident-image {
+    height: 138px;
   }
 }
