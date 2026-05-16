@@ -573,6 +573,17 @@ button {
   font-weight: 850;
 }
 
+.reveal-outlets-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  min-height: 42px;
+  border: 1px solid rgba(220, 226, 232, 0.92);
+  box-shadow: 0 10px 28px rgba(24, 34, 48, 0.14);
+  pointer-events: auto;
+}
+
 .map-intro,
 .consensus-strip {
   width: min(100%, 1180px);
@@ -649,6 +660,7 @@ button {
   max-width: 1180px;
   min-height: 760px;
   position: relative;
+  isolation: isolate;
   margin: 28px auto 0;
   overflow: hidden;
   border: 1px solid #dfe5eb;
@@ -682,6 +694,7 @@ button {
 .map-image {
   position: absolute;
   inset: -8% -6%;
+  z-index: 0;
   background-image: url("/shisen-map-transparent.png");
   background-position: center;
   background-size: cover;
@@ -1154,6 +1167,20 @@ button {
   .icon-label-button svg {
     width: 15px;
     height: 15px;
+  }
+
+  .reveal-outlets-button {
+    top: 14px;
+    right: 14px;
+    gap: 4px;
+    min-height: 28px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .reveal-outlets-button svg {
+    width: 12px;
+    height: 12px;
   }
 
   .map-intro {

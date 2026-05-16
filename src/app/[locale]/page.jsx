@@ -609,10 +609,6 @@ function NarrativeMap({ event, language, t, onBack }) {
           <ArrowLeft size={18} />
           {t.back}
         </button>
-        <button className="icon-label-button" onClick={() => setRevealed((value) => !value)}>
-          <Eye size={18} />
-          {revealed ? t.hide : t.reveal}
-        </button>
       </header>
 
       <section className="map-intro">
@@ -635,6 +631,13 @@ function NarrativeMap({ event, language, t, onBack }) {
 
       <section className="map-stage" aria-label="Korea Japan narrative map">
         <div className="map-image" aria-hidden="true" />
+        <button
+          className="icon-label-button reveal-outlets-button"
+          onClick={() => setRevealed((value) => !value)}
+        >
+          <Eye size={18} />
+          {revealed ? t.hide : t.reveal}
+        </button>
         <OutletCluster
           title={t.korea}
           className="korea-cluster"
