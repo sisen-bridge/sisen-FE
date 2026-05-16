@@ -512,27 +512,36 @@ function SwipeDeck({
   onReset,
   fallbackEvent,
 }) {
+  const SWIPE_THRESHOLD = 48;
+  const DRAG_LIMIT = 82;
   const [drag, setDrag] = useState({
     x: 0,
-    y: 0,
     startX: 0,
-    startY: 0,
     active: false,
     pointerId: null,
   });
   const topEvent = events[activeIndex];
-  const visibleEvents = [0, 1, 2]
-    .map((offset) => events[activeIndex + offset])
-    .filter(Boolean);
+  const hasMeaningfulDrag = drag.active && Math.abs(drag.x) > 8;
+  const targetIndex = drag.x < 0 ? activeIndex - 1 : activeIndex + 1;
+  const previewEvent =
+    hasMeaningfulDrag && events[targetIndex]
+      ? events[targetIndex]
+      : events[activeIndex + 1];
+  const visibleEvents = [
+    topEvent,
+    previewEvent,
+    events[activeIndex + 2],
+  ].filter(
+    (event, index, self) =>
+      event && self.findIndex((item) => item?.id === event.id) === index,
+  );
 
   function beginDrag(event) {
     if (!topEvent) return;
     event.currentTarget.setPointerCapture?.(event.pointerId);
     setDrag({
       x: 0,
-      y: 0,
       startX: event.clientX,
-      startY: event.clientY,
       active: true,
       pointerId: event.pointerId,
     });
@@ -542,22 +551,24 @@ function SwipeDeck({
     if (!drag.active || event.pointerId !== drag.pointerId) return;
     setDrag((prev) => ({
       ...prev,
-      x: event.clientX - prev.startX,
-      y: event.clientY - prev.startY,
+      x: Math.max(
+        -DRAG_LIMIT,
+        Math.min(DRAG_LIMIT, event.clientX - prev.startX),
+      ),
     }));
   }
 
   function endDrag(event) {
     if (!drag.active || !topEvent || event.pointerId !== drag.pointerId) return;
-    const moved = Math.abs(drag.x) > 10 || Math.abs(drag.y) > 10;
-    if (drag.x > 110) {
+    const moved = Math.abs(drag.x) > 10;
+    if (drag.x > SWIPE_THRESHOLD) {
       onNavigate(Math.min(activeIndex + 1, events.length - 1));
-    } else if (drag.x < -110) {
+    } else if (drag.x < -SWIPE_THRESHOLD) {
       onNavigate(Math.max(activeIndex - 1, 0));
     } else if (!moved) {
       onOpen(topEvent);
     }
-    setDrag({ x: 0, y: 0, startX: 0, startY: 0, active: false, pointerId: null });
+    setDrag({ x: 0, startX: 0, active: false, pointerId: null });
   }
 
   if (!topEvent) {
@@ -573,12 +584,13 @@ function SwipeDeck({
   }
 
   return (
-    <div className="deck">
+    <div className={`deck ${drag.active ? "dragging" : ""}`}>
       {visibleEvents.map((event, index) => {
         const isTop = index === 0;
         const style = isTop
           ? {
-              transform: `translate(${drag.x}px, ${drag.y}px) rotate(${drag.x / 20}deg)`,
+              transform: `translateX(${drag.x}px) rotate(${drag.x / 28}deg)`,
+              transition: drag.active ? "none" : undefined,
             }
           : undefined;
 
@@ -597,9 +609,7 @@ function SwipeDeck({
                 ? () =>
                     setDrag({
                       x: 0,
-                      y: 0,
                       startX: 0,
-                      startY: 0,
                       active: false,
                       pointerId: null,
                     })

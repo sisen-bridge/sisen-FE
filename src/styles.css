@@ -275,6 +275,10 @@ button {
   visibility: hidden;
 }
 
+.deck.dragging .deck-card.layer-1 .news-card > * {
+  visibility: visible;
+}
+
 .news-card {
   min-height: 528px;
   display: flex;
