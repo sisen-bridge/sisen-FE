@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { ArrowLeft, ExternalLink, Eye, Globe2, HelpCircle, RotateCcw, X } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, ExternalLink, Eye, Globe2, HelpCircle, RotateCcw, Search, X } from "lucide-react";
 
 const copy = {
   ko: {
@@ -38,6 +38,25 @@ const copy = {
     reset: "もう一度見る",
     close: "閉じる",
   },
+};
+
+const suggestedSearches = {
+  ko: [
+    "라인야후 지분 조정",
+    "후쿠시마 오염수 방류",
+    "한일 정상회담",
+    "독도 표기 논란",
+    "강제징용 배상 판결",
+    "엔저와 한국 관광",
+  ],
+  ja: [
+    "LINEヤフー資本見直し",
+    "福島処理水放出",
+    "日韓首脳会談",
+    "竹島表記問題",
+    "徴用工判決",
+    "円安と韓国旅行",
+  ],
 };
 
 const events = [
@@ -424,11 +443,26 @@ export default function App() {
   const [language, setLanguage] = useState("ko");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchRef = useRef(null);
   const t = copy[language];
 
   const orderedEvents = useMemo(() => createTopTenEvents(events), []);
 
   const activeEvent = selectedEvent ?? orderedEvents[activeIndex] ?? events[0];
+
+  useEffect(() => {
+    if (!isSearchOpen) return undefined;
+
+    function closeSearchOnOutsidePress(event) {
+      if (searchRef.current?.contains(event.target)) return;
+      setIsSearchOpen(false);
+    }
+
+    document.addEventListener("pointerdown", closeSearchOnOutsidePress);
+    return () => document.removeEventListener("pointerdown", closeSearchOnOutsidePress);
+  }, [isSearchOpen]);
 
   if (selectedEvent) {
     return (
@@ -449,6 +483,43 @@ export default function App() {
             <img src="/shisen-logo.png" alt="" aria-hidden="true" />
             <span>Shisen</span>
             <small>시선 / 視線</small>
+          </div>
+
+          {isSearchOpen && (
+            <button
+              type="button"
+              className="search-fade"
+              aria-label="close search suggestions"
+              onClick={() => setIsSearchOpen(false)}
+            />
+          )}
+
+          <div ref={searchRef} className={`header-search ${isSearchOpen ? "open" : ""}`}>
+            <input
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onFocus={() => setIsSearchOpen(true)}
+              placeholder={language === "ko" ? "한일 이슈 검색" : "日韓イシュー検索"}
+              aria-label={language === "ko" ? "한일 이슈 검색" : "日韓イシュー検索"}
+            />
+            <Search size={24} strokeWidth={3} aria-hidden="true" />
+            {isSearchOpen && (
+              <div className="search-suggestions" role="listbox">
+                {suggestedSearches[language].map((term) => (
+                  <button
+                    key={term}
+                    type="button"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => {
+                      setSearchQuery(term);
+                      setIsSearchOpen(false);
+                    }}
+                  >
+                    {term}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="language-switch" aria-label="language selector">

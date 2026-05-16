@@ -101,8 +101,82 @@ button {
   font-weight: 700;
 }
 
+.header-search {
+  position: relative;
+  z-index: 4;
+  flex: 1 1 auto;
+  min-width: 120px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  border-radius: 18px;
+  background: #e9eef3;
+}
+
+.header-search input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 48px 0 18px;
+  border: 0;
+  outline: 0;
+  color: #10141b;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.header-search input::placeholder {
+  color: transparent;
+}
+
+.header-search svg {
+  position: absolute;
+  right: 16px;
+  color: #202124;
+  pointer-events: none;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: min(100%, 520px);
+  padding: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16);
+}
+
+.search-suggestions button {
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: #26313f;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 750;
+  text-align: left;
+}
+
+.search-suggestions button:hover,
+.search-suggestions button:focus-visible {
+  background: #f2f5f8;
+}
+
+.search-fade {
+  display: none;
+}
+
 .language-switch {
   margin: 0;
+  position: relative;
+  z-index: 4;
   flex: 0 0 auto;
   display: flex;
   width: max-content;
@@ -129,14 +203,18 @@ button {
 }
 
 .headline-block {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .headline-block p {
   width: 100%;
-  margin: 32px 0 14px;
+  margin: 32px 0 14px 0;
+  padding: 0;
   color: #b6bec8;
   font-size: 18px;
   font-weight: 800;
@@ -146,6 +224,7 @@ button {
   display: inline-flex;
   align-items: center;
   margin: 0 14px 18px 0;
+  padding: 0;
   color: #070d15;
   font-size: 42px;
   line-height: 1.04;
@@ -946,6 +1025,16 @@ button {
     margin-bottom: 4px;
   }
 
+  .brand-mark {
+    flex: 0 0 auto;
+  }
+
+  .header-search {
+    max-width: 720px;
+    height: 44px;
+    margin: 0 4px 0 clamp(16px, 3vw, 54px);
+  }
+
   .headline-block {
     margin-top: 0;
   }
@@ -1051,19 +1140,27 @@ button {
   }
 
   .top-bar {
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .brand-mark {
+    position: relative;
+    z-index: 4;
+    flex: 0 0 auto;
+    gap: 6px;
   }
 
   .brand-mark img {
-    width: 42px;
-    height: 28px;
+    width: 36px;
+    height: 24px;
   }
 
   .brand-mark span {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .brand-mark small {
+    display: none;
     font-size: 9px;
   }
 
@@ -1072,9 +1169,53 @@ button {
   }
 
   .language-switch button {
-    min-width: 48px;
-    padding: 7px 8px;
-    font-size: 11px;
+    min-width: 42px;
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+
+  .header-search {
+    flex: 1 1 96px;
+    min-width: 0;
+    height: 34px;
+    border-radius: 13px;
+  }
+
+  .header-search input {
+    padding: 0 36px 0 12px;
+    font-size: 12px;
+  }
+
+  .header-search svg {
+    right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .search-fade {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    display: block;
+    background: rgba(255, 255, 255, 0.68);
+    backdrop-filter: blur(2px);
+  }
+
+  .search-suggestions {
+    position: fixed;
+    top: 66px;
+    left: 18px;
+    right: 18px;
+    width: auto;
+    max-height: calc(100vh - 86px);
+    overflow-y: auto;
+    padding: 8px;
+    border-radius: 14px;
+  }
+
+  .search-suggestions button {
+    min-height: 38px;
+    font-size: 13px;
   }
 
   .headline-block p {
@@ -1390,16 +1531,16 @@ button {
 
 @media (max-width: 360px) {
   .brand-mark {
-    gap: 6px;
+    gap: 5px;
   }
 
   .brand-mark img {
-    width: 38px;
-    height: 25px;
+    width: 32px;
+    height: 21px;
   }
 
   .brand-mark span {
-    font-size: 17px;
+    font-size: 15px;
   }
 
   .brand-mark small {
@@ -1407,9 +1548,18 @@ button {
   }
 
   .language-switch button {
-    min-width: 44px;
-    padding-inline: 7px;
-    font-size: 11px;
+    min-width: 38px;
+    padding-inline: 6px;
+    font-size: 10px;
+  }
+
+  .header-search {
+    flex-basis: 82px;
+  }
+
+  .header-search svg {
+    width: 18px;
+    height: 18px;
   }
 
   .headline-block h1 {
