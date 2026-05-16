@@ -557,9 +557,41 @@ function OutletCluster({
               </span>
               <strong>{getOutletHeadline(outlet, language)}</strong>
             </button>
+            {isOpen && (
+              <OutletAccordion
+                outlet={outlet}
+                language={language}
+                t={t}
+                onClose={() => setOpenCard(null)}
+              />
+            )}
           </article>
         );
       })}
+    </div>
+  );
+}
+
+function OutletAccordion({ outlet, language, t, onClose }) {
+  const { data: detail, isLoading } = useArticle(outlet.articleId);
+  const enriched = useMemo(() => mergeArticleDetail(outlet, detail), [outlet, detail]);
+  const summary = enriched.summary[language];
+
+  return (
+    <div className="expanded-narrative">
+      <p>{summary || (isLoading ? t.loading : "")}</p>
+      <div>
+        {enriched.url ? (
+          <a href={enriched.url} target="_blank" rel="noreferrer">
+            <ExternalLink size={16} />
+            {t.full}
+          </a>
+        ) : null}
+        <button onClick={onClose}>
+          <X size={16} />
+          {t.close}
+        </button>
+      </div>
     </div>
   );
 }
